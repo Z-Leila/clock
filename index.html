@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>canvas</title>
+	<style>
+	body{
+		/*background-color: #000;*/
+	}
+	#canvas{
+		border:1px solid red;
+		position: absolute;
+		margin:auto;
+		top:0;
+		right:0;
+		bottom:0;
+		left:0;
+		background: rgb(14, 14, 14);;
+		border-radius: 50px;
+	}
+	</style>
+</head>
+<body>
+<!-- 画布的大小只能用属性设置,不能用css -->
+<!-- canvas 默认display:inlineblock -->
+	<canvas id="canvas" width="600" height="600"></canvas>
+	<!-- <img src="1.jpg" alt="" style="display: none"> -->
+
+	<script>
+// 表
+	    var canvas = document.querySelector('#canvas');
+		var ctx = canvas.getContext('2d');
+	    var drawClock=function(){
+	     // 放图片&裁剪图片;
+		 var image = new Image();
+		 image.src = 'bg.png';
+		 image.onload = function(){
+		 	 var img=ctx.createPattern(image,'no-repeat');
+		 	ctx.fillStyle = image;
+		 	ctx.drawImage(image,5,50,600,600);
+		 	var r = function(deg){
+            	return (Math.PI/180)*deg;
+            }
+            // ctx.clearRect(0,0,600,600);
+		     var now=new Date();
+		     var s=now.getSeconds();
+		     var m=now.getMinutes();
+		     var h=now.getHours();
+		     var hs=now.getMilliseconds();
+		     ctx.save();
+		     
+		     ctx.translate(300,300);
+		     ctx.beginPath();
+		     
+		     // 表盘
+		     ctx.arc(0,0,200,0,r(360));
+		     ctx.fillStyle = "rgba(12,16,0,0.3)";
+		     ctx.fill();
+		     ctx.strokeStyle = '#fff';
+		     ctx.stroke();
+		     ctx.closePath();
+		     //数字
+			ctx.save();
+			ctx.beginPath();
+			var deg=2*Math.PI/12;
+			for(var i=1;i<13;i++){
+			var x1=Math.sin(i*deg);
+			var y1=-Math.cos(i*deg);
+			ctx.fillStyle="#fff";
+			ctx.font="bold 20px Calibri";
+			ctx.textAlign='center';
+			ctx.textBaseline='middle';
+			ctx.fillText(i,x1*120,y1*120);    
+			}
+			ctx.closePath();    
+			ctx.restore(); 
+			// 文字
+			ctx.save();
+			ctx.fillStyle='#fff';
+			ctx.font = "35px consolas"
+			ctx.shadowOffsetX = 20;
+			ctx.shadowOffsetX = 20;
+			ctx.shadowBlur = 10;
+			ctx.showColor = 'black';
+			ctx.textAlign='center';
+            ctx.textBaseline='middle';
+			ctx.fillText("CASIO",0,-65);
+			ctx.restore();
+		     // 刻度线
+		     ctx.save();
+		     ctx.beginPath();
+		     for(var i=0;i<60;i++){
+		     	ctx.lineWidth=1;
+		     	if(i%5===0){
+		     	    ctx.moveTo(0,-180);
+		     	    ctx.lineTo(0,-160);
+		     	    ctx.lineWidth=4;
+		     	}
+		     	ctx.rotate(r(6));
+		     	ctx.moveTo(0,-180);
+		     	ctx.lineTo(0,-200);
+		     }
+		     ctx.stroke();
+		     ctx.closePath();
+		     ctx.restore();
+		     //指针
+		     //秒针
+		     ctx.save();
+		     ctx.rotate(r(360*(s*1000+hs)/60000));
+		     ctx.beginPath();
+		     ctx.moveTo(0,5);
+		     ctx.lineTo(0,20);
+		     ctx.moveTo(5,0);
+		     ctx.arc(0,0,5,0,r(360));
+		     ctx.moveTo(0,-5);
+		     ctx.lineTo(0,-140);
+		     ctx.lineWidth = 2.5;
+		     ctx.strokeStyle = '#ADE383'
+             ctx.shadowOffsetX = 5;
+             ctx.shadowOffsetY = 5;
+             ctx.shadowBlur = 5;
+             ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+		     ctx.stroke();
+		     ctx.closePath();
+		     ctx.restore();
+		     // 时针
+		     ctx.save();
+		     ctx.rotate(r(360*(h*60*60+60*m+s)/43200));
+		     // ctx.rotate(r(50));
+		     ctx.beginPath();
+		     // ctx.rotate(r(deg));
+		     ctx.moveTo(0,5);
+		     ctx.lineTo(0,20);
+		     ctx.moveTo(0,-5);
+		     ctx.lineTo(0,-50);
+		     ctx.lineWidth = 7.5;
+             ctx.lineCap = 'round';
+             ctx.strokeStyle = '#fff';
+             ctx.shadowOffsetX = 5;
+             ctx.shadowOffsetY = 5;
+             ctx.shadowBlur = 10;
+             ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+		     ctx.stroke();
+		     ctx.closePath();
+		     ctx.restore();
+		     // 分针
+		     ctx.save();
+		     ctx.rotate(r(360*((m*60+s)/3600)));
+
+		     // ctx.rotate(r(90));
+		     ctx.beginPath();
+		     ctx.moveTo(0,5);
+		     ctx.lineTo(0,20);
+		     ctx.lineCap = 'round';
+		     ctx.moveTo(0,-5);
+		     ctx.lineTo(0,-100);
+		     ctx.lineWidth = 7.5;
+             ctx.strokeStyle = '#fff';
+             ctx.shadowOffsetX = 5;
+             ctx.shadowOffsetY = 5;
+             ctx.shadowBlur = 10;
+             ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+		     ctx.stroke();
+		     ctx.closePath();
+		     ctx.restore();
+		     ctx.restore();			 	
+		 }	     
+	    }
+	    drawClock();
+	    setInterval(drawClock,12);
+
+
+
+
+
+	</script>
+</body>
+</html>
